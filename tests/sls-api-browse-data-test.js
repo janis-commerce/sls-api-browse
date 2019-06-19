@@ -54,6 +54,13 @@ describe('SlsApiBrowseData', () => {
 			const apiResponse = await SlsApiBrowseData.handler({
 				path: {
 					entity: 'some-entity'
+				},
+				headers: {
+					'x-foo': 'bar'
+				},
+				query: {
+					sortBy: 'id',
+					sortDirection: 'asc'
 				}
 			});
 
@@ -68,7 +75,60 @@ describe('SlsApiBrowseData', () => {
 			sandbox.assert.calledWithExactly(getDispatcherStub, {
 				entity: 'some-entity',
 				action: 'browse',
-				method: 'data'
+				method: 'data',
+				headers: {
+					'x-foo': 'bar'
+				},
+				data: {
+					sortBy: 'id',
+					sortDirection: 'asc'
+				}
+			});
+
+			sandbox.assert.calledOnce(dispatcherStub.dispatch);
+		});
+
+		it('Should pass the request arguments (without querystring) to the Dispatcher and map the dispatcher result', async () => {
+
+			const dispatcherStub = sandbox.stub(Dispatcher.prototype);
+
+			dispatcherStub.dispatch.resolves({
+				code: 200,
+				body: {
+					foo: 'bar'
+				},
+				extraProp: 'more foo'
+			});
+
+			const getDispatcherStub = sandbox.stub(SlsApiBrowseData, 'getDispatcher');
+
+			getDispatcherStub.returns(dispatcherStub);
+
+			const apiResponse = await SlsApiBrowseData.handler({
+				path: {
+					entity: 'some-entity'
+				},
+				headers: {
+					'x-foo': 'bar'
+				}
+			});
+
+			assert.deepStrictEqual(apiResponse, {
+				statusCode: 200,
+				body: {
+					foo: 'bar'
+				}
+			});
+
+			sandbox.assert.calledOnce(getDispatcherStub);
+			sandbox.assert.calledWithExactly(getDispatcherStub, {
+				entity: 'some-entity',
+				action: 'browse',
+				method: 'data',
+				headers: {
+					'x-foo': 'bar'
+				},
+				data: {}
 			});
 
 			sandbox.assert.calledOnce(dispatcherStub.dispatch);
