@@ -4,6 +4,7 @@ const assert = require('assert');
 
 const sandbox = require('sinon').createSandbox();
 
+const { ApiResponse } = require('@janiscommerce/sls-api-response');
 const { Dispatcher } = require('@janiscommerce/api-view');
 
 const { SlsApiBrowseData } = require('..');
@@ -38,7 +39,6 @@ describe('SlsApiBrowseData', () => {
 		it('Should pass the request arguments to the Dispatcher and map the dispatcher result', async () => {
 
 			const dispatcherStub = sandbox.stub(Dispatcher.prototype);
-
 			dispatcherStub.dispatch.resolves({
 				code: 200,
 				body: {
@@ -48,8 +48,10 @@ describe('SlsApiBrowseData', () => {
 			});
 
 			const getDispatcherStub = sandbox.stub(SlsApiBrowseData, 'getDispatcher');
-
 			getDispatcherStub.returns(dispatcherStub);
+
+			const apiResponseStub = sandbox.stub(ApiResponse, 'send');
+			apiResponseStub.returns('the actual response');
 
 			const apiResponse = await SlsApiBrowseData.handler({
 				path: {
@@ -64,12 +66,7 @@ describe('SlsApiBrowseData', () => {
 				}
 			});
 
-			assert.deepStrictEqual(apiResponse, {
-				statusCode: 200,
-				body: {
-					foo: 'bar'
-				}
-			});
+			assert.deepStrictEqual(apiResponse, 'the actual response');
 
 			sandbox.assert.calledOnce(getDispatcherStub);
 			sandbox.assert.calledWithExactly(getDispatcherStub, {
@@ -86,12 +83,19 @@ describe('SlsApiBrowseData', () => {
 			});
 
 			sandbox.assert.calledOnce(dispatcherStub.dispatch);
+
+			sandbox.assert.calledOnce(apiResponseStub);
+			sandbox.assert.calledWithExactly(apiResponseStub, {
+				statusCode: 200,
+				body: {
+					foo: 'bar'
+				}
+			});
 		});
 
 		it('Should pass the request arguments (without querystring) to the Dispatcher and map the dispatcher result', async () => {
 
 			const dispatcherStub = sandbox.stub(Dispatcher.prototype);
-
 			dispatcherStub.dispatch.resolves({
 				code: 200,
 				body: {
@@ -101,8 +105,10 @@ describe('SlsApiBrowseData', () => {
 			});
 
 			const getDispatcherStub = sandbox.stub(SlsApiBrowseData, 'getDispatcher');
-
 			getDispatcherStub.returns(dispatcherStub);
+
+			const apiResponseStub = sandbox.stub(ApiResponse, 'send');
+			apiResponseStub.returns('the actual response');
 
 			const apiResponse = await SlsApiBrowseData.handler({
 				path: {
@@ -113,12 +119,7 @@ describe('SlsApiBrowseData', () => {
 				}
 			});
 
-			assert.deepStrictEqual(apiResponse, {
-				statusCode: 200,
-				body: {
-					foo: 'bar'
-				}
-			});
+			assert.deepStrictEqual(apiResponse, 'the actual response');
 
 			sandbox.assert.calledOnce(getDispatcherStub);
 			sandbox.assert.calledWithExactly(getDispatcherStub, {
@@ -132,6 +133,14 @@ describe('SlsApiBrowseData', () => {
 			});
 
 			sandbox.assert.calledOnce(dispatcherStub.dispatch);
+
+			sandbox.assert.calledOnce(apiResponseStub);
+			sandbox.assert.calledWithExactly(apiResponseStub, {
+				statusCode: 200,
+				body: {
+					foo: 'bar'
+				}
+			});
 		});
 
 		it('Should return an error if the Dispatcher throws', async () => {
@@ -141,8 +150,10 @@ describe('SlsApiBrowseData', () => {
 			dispatcherStub.dispatch.throws(new Error('Some error'));
 
 			const getDispatcherStub = sandbox.stub(SlsApiBrowseData, 'getDispatcher');
-
 			getDispatcherStub.returns(dispatcherStub);
+
+			const apiResponseStub = sandbox.stub(ApiResponse, 'send');
+			apiResponseStub.returns('the actual response');
 
 			const apiResponse = await SlsApiBrowseData.handler({
 				path: {
@@ -152,37 +163,41 @@ describe('SlsApiBrowseData', () => {
 				data: {}
 			});
 
-			assert.deepStrictEqual(apiResponse, {
+			assert.deepStrictEqual(apiResponse, 'the actual response');
+
+			sandbox.assert.calledOnce(getDispatcherStub);
+			sandbox.assert.calledWithExactly(getDispatcherStub, {
+				entity: 'some-entity',
+				action: 'browse',
+				method: 'data',
+				headers: {},
+				data: {}
+			});
+
+			sandbox.assert.calledOnce(dispatcherStub.dispatch);
+
+			sandbox.assert.calledOnce(apiResponseStub);
+			sandbox.assert.calledWithExactly(apiResponseStub, {
 				statusCode: 500,
 				body: {
 					message: 'Some error'
 				}
 			});
-
-			sandbox.assert.calledOnce(getDispatcherStub);
-			sandbox.assert.calledWithExactly(getDispatcherStub, {
-				entity: 'some-entity',
-				action: 'browse',
-				method: 'data',
-				headers: {},
-				data: {}
-			});
-
-			sandbox.assert.calledOnce(dispatcherStub.dispatch);
 		});
 
 		it('Should return an error with a custom statusCode if the Dispatcher throws with a code', async () => {
 
-			const dispatcherStub = sandbox.stub(Dispatcher.prototype);
-
 			const error = new Error('Some error');
 			error.code = 503;
 
+			const dispatcherStub = sandbox.stub(Dispatcher.prototype);
 			dispatcherStub.dispatch.throws(error);
 
 			const getDispatcherStub = sandbox.stub(SlsApiBrowseData, 'getDispatcher');
-
 			getDispatcherStub.returns(dispatcherStub);
+
+			const apiResponseStub = sandbox.stub(ApiResponse, 'send');
+			apiResponseStub.returns('the actual response');
 
 			const apiResponse = await SlsApiBrowseData.handler({
 				path: {
@@ -192,12 +207,7 @@ describe('SlsApiBrowseData', () => {
 				data: {}
 			});
 
-			assert.deepStrictEqual(apiResponse, {
-				statusCode: 503,
-				body: {
-					message: 'Some error'
-				}
-			});
+			assert.deepStrictEqual(apiResponse, 'the actual response');
 
 			sandbox.assert.calledOnce(getDispatcherStub);
 			sandbox.assert.calledWithExactly(getDispatcherStub, {
@@ -209,6 +219,14 @@ describe('SlsApiBrowseData', () => {
 			});
 
 			sandbox.assert.calledOnce(dispatcherStub.dispatch);
+
+			sandbox.assert.calledOnce(apiResponseStub);
+			sandbox.assert.calledWithExactly(apiResponseStub, {
+				statusCode: 503,
+				body: {
+					message: 'Some error'
+				}
+			});
 		});
 	});
 
