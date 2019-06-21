@@ -43,8 +43,7 @@ describe('SlsApiBrowseFilters', () => {
 				code: 200,
 				body: {
 					foo: 'bar'
-				},
-				extraProp: 'more foo'
+				}
 			});
 
 			const getDispatcherStub = sandbox.stub(SlsApiBrowseFilters, 'getDispatcher');
@@ -54,7 +53,9 @@ describe('SlsApiBrowseFilters', () => {
 			const apiResponse = await SlsApiBrowseFilters.handler({
 				path: {
 					entity: 'some-entity'
-				}
+				},
+				data: {},
+				headers: {}
 			});
 
 			assert.deepStrictEqual(apiResponse, {
@@ -68,7 +69,9 @@ describe('SlsApiBrowseFilters', () => {
 			sandbox.assert.calledWithExactly(getDispatcherStub, {
 				entity: 'some-entity',
 				action: 'browse',
-				method: 'filters'
+				method: 'filters',
+				data: {},
+				headers: {}
 			});
 
 			sandbox.assert.calledOnce(dispatcherStub.dispatch);
