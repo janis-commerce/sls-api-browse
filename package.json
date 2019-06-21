@@ -1,6 +1,6 @@
 {
   "name": "@janiscommerce/sls-api-browse",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "An integration handler for Serverless and JANIS Views API Browse",
   "main": "index.js",
   "scripts": {
@@ -32,7 +32,7 @@
     "test": "tests"
   },
   "dependencies": {
-    "@janiscommerce/api-view": "^1.1.0",
+    "@janiscommerce/api-view": "^1.2.0",
     "@janiscommerce/sls-api-response": "^1.1.0",
     "amazon-api-gateway-querystring": "^1.0.5"
   }
