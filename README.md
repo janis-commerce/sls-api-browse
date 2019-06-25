@@ -19,7 +19,7 @@ npm install @janiscommerce/sls-api-browse
 
 const { SlsApiBrowseData } = require('@janiscommerce/sls-api-browse');
 
-module.exports = SlsApiBrowseData.handler;
+module.exports.handler = (...args) => SlsApiBrowseData.handler(...args);
 ```
 
 - API Browse Filters
