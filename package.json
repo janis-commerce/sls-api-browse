@@ -8,7 +8,7 @@
     "test-ci": "nyc --reporter=html --reporter=text mocha --recursive tests/",
     "watch-test": "export TEST_ENV=true; mocha --exit -R nyan -w --recursive tests/",
     "coverage": "nyc npm test",
-    "lint": "eslint lib/ tests/"
+    "lint": "eslint index.js lib/ tests/"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,7 @@
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.17.3",
+    "husky": "^2.4.1",
     "mocha": "^5.2.0",
     "nyc": "^13.1.0",
     "sinon": "^7.3.2"
